@@ -1,0 +1,10 @@
+[Unit]
+Description=Encfs/Dropbox corruption monitor
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=COMMAND ARGS
+Type=simple
+RemainAfterExit=yes

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+MOUNT="$1"
+SLEEP="$2"
+
+function mounted() {
+    if mount | grep -q "$MOUNT"
+    then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
+was_mounted="false"
+while true;
+do
+    mnt=$(mounted)
+    echo "MOUNTED: $mnt"
+    if [[ "$was_mounted" == false ]] && [[ "$mnt" == true  ]]
+    then
+        echo "Detected that $MOUNT is mounted now, running the check"
+        res=$(find "$MOUNT" -type f -exec cat {} \; 2>&1 >/dev/null)
+        if [[ -z $res ]]
+        then
+            echo "No errors detected"
+        else
+            echo "Errors detected!"
+            echo "$res"
+            echo "$res" | mail -s "Errors on encfs mount $MOUNT" "$USER"
+        fi
+    else
+        echo "No change in mount"
+    fi
+    sleep "$SLEEP"
+    was_mounted=$mnt
+done
