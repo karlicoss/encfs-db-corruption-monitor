@@ -7,4 +7,3 @@ WantedBy=multi-user.target
 [Service]
 ExecStart=COMMAND ARGS
 Type=simple
-RemainAfterExit=yes
