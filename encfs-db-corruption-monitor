@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 MOUNT="$1"
 SLEEP="$2"
