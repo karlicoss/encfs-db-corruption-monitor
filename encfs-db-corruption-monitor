@@ -4,6 +4,10 @@ set -eu
 MOUNT="$1"
 SLEEP="$2"
 
+function errecho {
+    >&2 echo "$@"
+}
+
 function mounted() {
     if mount | grep -q "$MOUNT"
     then
@@ -17,21 +21,21 @@ was_mounted="false"
 while true;
 do
     mnt=$(mounted)
-    echo "MOUNTED: $mnt"
+    errecho "MOUNTED: $mnt"
     if [[ "$was_mounted" == false ]] && [[ "$mnt" == true  ]]
     then
-        echo "Detected that $MOUNT is mounted now, running the check"
+        errecho "Detected that $MOUNT is mounted now, running the check"
         res=$(find "$MOUNT" -type f -exec cat {} \; 2>&1 >/dev/null)
         if [[ -z $res ]]
         then
-            echo "No errors detected"
+            errecho "No errors detected"
         else
-            echo "Errors detected!"
-            echo "$res"
-            echo "$res" | mail -s "Errors on encfs mount $MOUNT" "$USER"
+            errecho "Errors detected!"
+            errecho "$res"
+            errecho "$res" | mail -s "Errors on encfs mount $MOUNT" "$USER"
         fi
     else
-        echo "No change in mount"
+        errecho "No change in mount"
     fi
     sleep "$SLEEP"
     was_mounted=$mnt
